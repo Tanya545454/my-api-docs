@@ -1,0 +1,320 @@
+openapi: 3.0.1
+info:
+  title: Работа с заявками
+  version: 0.0.1
+servers:
+  - url: https://editor.swagger.io/
+    description: Dev server
+paths:
+  /applications:
+    get:
+      summary: Метод получения всех заявок
+      tags:
+        - Applications
+      operationId: getAllApplications
+      parameters:
+        - name: limit
+          in: query
+          description: Количество заявок на странице
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+        - name: offset
+          in: query
+          description: Смещение (начало выборки)
+          required: false
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+      responses:
+        '200':
+          description: Успешный ответ со списком заявок
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Applications"
+        '400':
+          description: Некорректный запрос
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        '500':
+          description: Внутренняя ошибка сервера
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+                
+    post:
+      summary: Метод регистрации заявки (создание новой)
+      tags:
+        - Applications
+      operationId: registrationOfApplication
+      requestBody:
+        required: true
+        description: Данные для создания заявки
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ApplicationInPutPost"
+      responses:
+        '201':
+          description: Успешный ответ с регистрацией заявки
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Application"
+        '400':
+          description: Некорректные данные заявки
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        '500':
+          description: Внутренняя ошибка сервера
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+                
+  /applications/{application_id}: 
+    get:
+      summary: Метод получения заявки по идентификатору
+      tags:
+        - Applications
+      operationId: getApplicationsById
+      parameters: 
+        - name: application_id
+          in: path
+          required: true
+          description: Идентификатор заявки
+          schema:
+            type: integer
+          example: 1234
+      responses:
+        '200':
+          description: Успешный ответ с одной заявкой
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Application"
+        '400':
+          description: Некорректный запрос
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        '404': 
+          description: "Не найдена заявка"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        '500':
+          description: Внутренняя ошибка сервера
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+                
+    delete:
+      summary: Метод удаления заявки по идентификатору
+      tags:
+        - Applications
+      operationId: deleteApplicationById
+      parameters: 
+        - name: application_id
+          in: path
+          required: true
+          description: Идентификатор заявки для удаления
+          schema:
+            type: integer
+          example: 1234
+      responses:
+        '204':
+          description: Успешное удаление заявки
+        '400':
+          description: Некорректный запрос
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        '404': 
+          description: "Не найдена заявка"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        '500':
+          description: Внутренняя ошибка сервера
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+                
+    put:
+      summary: Метод обработки заявки по идентификатору
+      tags:
+        - Applications
+      operationId: processingRequestById
+      parameters: 
+        - name: application_id
+          in: path
+          required: true
+          description: Идентификатор заявки для полного обновления
+          schema:
+            type: integer
+          example: 1234
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ApplicationInPutPost"
+      responses:
+        '200':
+          description: Полное обновление заявки
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Application"
+        '404': 
+          description: "Не найдена заявка"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        '400':
+          description: Некорректный запрос
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        '500':
+          description: Внутренняя ошибка сервера
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+                
+    patch:
+      summary: Метод частичного обновления заявки по идентификатору
+      tags:
+        - Applications
+      operationId: partialUpdateApplicationById
+      parameters: 
+        - name: application_id
+          in: path
+          required: true
+          description: Идентификатор заявки для частичного обновления
+          schema:
+            type: integer
+          example: 1234
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ApplicationUpdate"
+      responses:
+        '200':
+          description: Успешное частичное обновление заявки
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Application"
+        '404': 
+          description: "Не найдена заявка"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        '400':
+          description: Некорректный запрос
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        '500':
+          description: Внутренняя ошибка сервера
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+                
+components:
+  schemas:
+    Application:
+      type: object
+      required:
+        - name
+        - status
+      properties:
+        application_id:
+          type: integer
+          readOnly: true
+          example: 12345
+        name:
+          type: string
+          example: "Заявка на подключение API"
+        status:
+          type: string
+          enum:
+            - registered
+            - processed
+          description: Состояние заявки
+          example: registered
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          example: 2025-05-04T15:00:00+01:00
+    Applications:
+      type: array
+      items:
+         $ref: "#/components/schemas/Application"
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+        message:
+          type: string
+          example: "Некорректный формат запроса"
+    ApplicationInPutPost:
+      type: object
+      required:
+        - name
+        - status
+      properties:
+        name:
+          type: string
+          example: "Заявка на доступ в систему"
+        status:
+          type: string
+          enum:
+            - registered
+            - processed
+          description: Состояние заявки после изменений
+    ApplicationUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+          nullable: true
+          example: "Обновлённое название заявки"
+        status:
+          type: string
+          enum: 
+            - registered
+            - processed
+          nullable: true
+          description: Состояние заявки после частичных изменений
